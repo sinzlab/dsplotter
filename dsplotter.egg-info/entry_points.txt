@@ -1,2 +1,0 @@
-[console_scripts]
-your_command = your_project.module1:main_function
