@@ -1,0 +1,10 @@
+README.md
+setup.py
+dsplotter/__init__.py
+dsplotter/plotter.py
+dsplotter.egg-info/PKG-INFO
+dsplotter.egg-info/SOURCES.txt
+dsplotter.egg-info/dependency_links.txt
+dsplotter.egg-info/entry_points.txt
+dsplotter.egg-info/requires.txt
+dsplotter.egg-info/top_level.txt
