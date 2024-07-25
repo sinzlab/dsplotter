@@ -4,6 +4,10 @@ import folium
 from IPython.display import display
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
+import geopandas as gpd
+import folium
+import matplotlib.colors as mcolors
+import branca.colormap as cm
 
 def plot_map(data, color_col, radius_col, radius_scale=10):
     '''
@@ -42,14 +46,17 @@ def plot_map(data, color_col, radius_col, radius_scale=10):
     # initialize the map centered around the coordinates
     m = folium.Map(location=[goe_lat, goe_long], zoom_start=15)
     
-    # normalize the values
-    norm = mcolors.Normalize(vmin=gdf[color_col].min(), vmax=gdf[color_col].max())
-
     # choose a colormap
     cmap = plt.cm.coolwarm
+    # normalize the values
+    norm = mcolors.Normalize(vmin=gdf[color_col].min(), vmax=gdf[color_col].max())
+    scalar_map = plt.cm.ScalarMappable(norm=norm, cmap=cmap)
+
+    # function to map values to colors
+    def map_value_to_color(value):
+        return mcolors.to_hex(scalar_map.to_rgba(value))
 
     # map the normalized values to colors
-    gdf['color'] = gdf[color_col].apply(lambda x: mcolors.to_hex(cmap(norm(x))))
     gdf['radius_norm'] = (gdf[radius_col]-gdf[radius_col].min())/(gdf[radius_col].max()-gdf[radius_col].min())
     for idx, row in gdf.iterrows():
         popup_content = "<b>Details:</b><br>"
@@ -59,11 +66,22 @@ def plot_map(data, color_col, radius_col, radius_scale=10):
         folium.CircleMarker(
             location=[row[latitude_col], row[longitude_col]],
             radius=5+radius_scale*row['radius_norm'],  
-            color=row['color'],
+            color=map_value_to_color(row[color_col]),
             fill=True,
-            fill_color=row['color'],
+            fill_color=map_value_to_color(row[color_col]),
             fill_opacity=0.9,
             popup=popup_content
         ).add_to(m)
+
+    # create a branca colormap object
+    colormap = cm.LinearColormap(
+        colors=[cmap(i) for i in range(cmap.N)],
+        vmin=gdf[color_col].min(),
+        vmax=gdf[color_col].max(),
+        caption= color_col
+    )
+
+    # add the colormap as a legend
+    colormap.add_to(m)
 
     display(m)
