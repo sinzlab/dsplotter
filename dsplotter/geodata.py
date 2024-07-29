@@ -25,6 +25,6 @@ def prepare_geodata(data):
         print(f' Use the column {latitude_col} for the latitude coordinate.')        
     else:
         latitude_col = 'latitude'
-        
-    gdf = gpd.GeoDataFrame(data, geometry=gpd.points_from_xy(data[longitude_col], data[latitude_col]), crs="EPSG:4326")
+    data.rename(columns={longitude_col: 'longitude', latitude_col: 'latitude'}, inplace=True)
+    gdf = gpd.GeoDataFrame(data, geometry=gpd.points_from_xy(data['longitude'], data['latitude']), crs="EPSG:4326")
     return gdf
