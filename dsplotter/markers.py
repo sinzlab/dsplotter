@@ -4,7 +4,7 @@ import folium
 import matplotlib.colors as mcolors
 import branca.colormap as cm
 
-def add_markers(gdf, m, color_col, radius_col, radius_scale, scalar_map, cmap):
+def add_markers(gdf, m, color_col, radius_col, radius_scale, alpha, scalar_map, cmap):
     '''
     Adds markers to the map.
 
@@ -24,7 +24,10 @@ def add_markers(gdf, m, color_col, radius_col, radius_scale, scalar_map, cmap):
     def map_value_to_color(value):
         return mcolors.to_hex(scalar_map.to_rgba(value))
     
-    gdf['radius_norm'] = (gdf[radius_col] - gdf[radius_col].min()) / (gdf[radius_col].max() - gdf[radius_col].min())
+    if gdf[radius_col].unique().shape[0]==1:
+        gdf['radius_norm'] = 1
+    else:
+        gdf['radius_norm'] = (gdf[radius_col] - gdf[radius_col].min()) / (gdf[radius_col].max() - gdf[radius_col].min())
     for idx, row in gdf.iterrows():
         popup_content = "<b>Details:</b><br>"
         for key, value in row.items():
@@ -36,7 +39,8 @@ def add_markers(gdf, m, color_col, radius_col, radius_scale, scalar_map, cmap):
             color=map_value_to_color(row[color_col]),
             fill=True,
             fill_color=map_value_to_color(row[color_col]),
-            fill_opacity=0.9,
+            fill_opacity=alpha,
+            opacity=alpha,
             popup=popup_content
         ).add_to(m)
     
