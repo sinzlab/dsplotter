@@ -8,7 +8,8 @@ setup(
         'matplotlib',
         'geopandas',
         'folium',
-        'seaborn'
+        'seaborn',
+        'ipython'
     ],
     entry_points={
         'console_scripts': [

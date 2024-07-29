@@ -1,0 +1,1 @@
+This is a helper repository for the Data Science Exam in the summer term of 2024 at the University of Göttingen. The repository is pip installable. 
